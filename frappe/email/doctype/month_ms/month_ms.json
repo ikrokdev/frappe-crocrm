@@ -1,0 +1,31 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-07-18 14:19:41.824217",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "month"
+ ],
+ "fields": [
+  {
+   "fieldname": "month",
+   "fieldtype": "Link",
+   "label": "Month",
+   "options": "Month"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2024-07-18 14:21:27.664717",
+ "modified_by": "Administrator",
+ "module": "Email",
+ "name": "Month MS",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
