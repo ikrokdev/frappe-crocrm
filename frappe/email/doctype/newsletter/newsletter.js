@@ -73,6 +73,21 @@ frappe.ui.form.on("Newsletter", {
 				},
 				__("Send")
 			);
+
+			frm.add_custom_button(
+				__("Intervally sending"),
+				() => {
+					frm.events.intervally_send_dialog(frm);
+				},
+				__("Send")
+			);
+			frm.add_custom_button(
+				__("Test"),
+				() => {
+					frappe.call("frappe.email.doctype.newsletter.newsletter.intervally_send_email");
+				},
+				__("Send")
+			);
 		}
 
 		frm.events.update_sending_status(frm);
@@ -144,6 +159,79 @@ frappe.ui.form.on("Newsletter", {
 				d.set_value("date", date);
 				d.set_value("time", time.slice(0, 5));
 			}
+		}
+		d.show();
+	},
+
+	intervally_send_dialog(frm) {
+		
+		let d = new frappe.ui.Dialog({
+			title: __("Intervally sending"),
+			fields: [
+				{
+                    label: __('Sending Interval'),
+                    fieldname: 'sending_interval',
+                    fieldtype: 'Select',
+                    options: ['Weekly', 'Monthly', 'Yearly'],
+                    default: 'Weekly',
+                    reqd: 1,
+                    description: __('Select the interval for sending newsletters.')
+                },
+				{
+					label: 'Week Day',
+					fieldname: 'week_day',
+					fieldtype: 'Select',
+					options: ['Monday', 'Tuesday', 'Wednesday', 'Thursday',  'Friday', 'Saturday', 'Sunday'],
+					depends_on: 'eval:doc.sending_interval == "Weekly"',
+					mandatory_depends_on: "eval:doc.sending_interval === 'Weekly'",
+					reqd: 0,
+					translatable: 1
+				},
+				{
+					label: 'Month',
+					fieldname: 'month',
+					fieldtype: 'Table MultiSelect',
+					options: 'Month MS',
+					depends_on: 'eval:doc.sending_interval == "Yearly"',
+					mandatory_depends_on: 'eval:doc.sending_interval == "Yearly"',
+					reqd: 0
+				},
+				{
+					label: 'Month Day',
+					fieldname: 'month_day',
+					fieldtype: 'Table MultiSelect',
+					options: 'Month Day MS',
+					depends_on: 'eval:doc.sending_interval == "Monthly" || doc.sending_interval == "Yearly"',
+					mandatory_depends_on: 'eval:doc.sending_interval == "Monthly" || doc.sending_interval == "Yearly"',
+					reqd: 0,
+					limit:100
+				}
+			],
+			primary_action_label: __("Schedule"),
+			primary_action({ sending_interval, week_day, month_day, month}) {
+				console.log(sending_interval, week_day, month_day, month);
+				frm.set_value("custom_intervally_sending", 1);
+				frm.set_value("custom_sending_interval", sending_interval);
+				if (month) {frm.set_value("custom_month", month)};
+				if (month_day) {frm.set_value("custom_month_day", month_day)};
+				if (week_day) {frm.set_value("custom_week_day", week_day)};
+							
+				console.log(month_day);
+				d.hide();
+				frm.save();
+			},
+			secondary_action_label: __("Stop Scheduling"),
+			secondary_action() {
+				frm.set_value("custom_intervally_sending", 0);
+				frm.set_value("custom_sending_interval", null);
+				frm.set_value("custom_month", null);
+				frm.set_value("custom_month_day", null);
+				frm.set_value("custom_week_day", null);
+				d.hide();
+				frm.save();
+			},
+		});
+		if (frm.doc.custom_intervally_sending) {
 		}
 		d.show();
 	},

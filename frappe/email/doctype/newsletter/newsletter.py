@@ -197,6 +197,21 @@ class Newsletter(WebsiteGenerator):
 		self.total_recipients = len(recipients)
 		self.save()
 
+	def iterally_queue_all(self):
+		self.validate()
+		self.validate_send()
+
+		recipients = self.get_itervally_recipients()
+		self.send_newsletter(emails=recipients)
+		frappe.msgprint(f'{recipients}')
+
+		self.email_sent_at = frappe.utils.now()
+		self.total_recipients = len(recipients)
+		self.save()
+
+	def get_itervally_recipients(self):
+		return self.newsletter_recipients
+
 	def get_newsletter_attachments(self) -> list[dict[str, str]]:
 		"""Get list of attachments on current Newsletter"""
 		return [{"file_url": row.attachment} for row in self.attachments]
@@ -206,29 +221,54 @@ class Newsletter(WebsiteGenerator):
 		attachments = self.get_newsletter_attachments()
 		sender = self.send_from or frappe.utils.get_formatted_email(self.owner)
 		args = self.as_dict()
-		args["message"] = self.get_message(medium="email")
-
 		is_auto_commit_set = bool(frappe.db.auto_commit_on_many_writes)
 		frappe.db.auto_commit_on_many_writes = not frappe.flags.in_test
+		
+		
 
-		frappe.sendmail(
-			subject=self.subject,
-			sender=sender,
-			recipients=emails,
-			attachments=attachments,
-			template="newsletter",
-			add_unsubscribe_link=self.send_unsubscribe_link,
-			unsubscribe_method="/unsubscribe",
-			unsubscribe_params={"name": self.name},
-			reference_doctype=self.doctype,
-			reference_name=self.name,
-			queue_separately=True,
-			send_priority=0,
-			args=args,
-			email_read_tracker_url=None
-			if test_email
-			else "/api/method/frappe.email.doctype.newsletter.newsletter.newsletter_email_read",
-		)
+		if self.custom_content_source == 'Raw':
+			args["message"] = self.get_message(medium="email")
+
+			frappe.sendmail(
+				subject=self.subject,
+				sender=sender,
+				recipients=emails,
+				attachments=attachments,
+				template="newsletter",
+				add_unsubscribe_link=self.send_unsubscribe_link,
+				unsubscribe_method="/unsubscribe",
+				unsubscribe_params={"name": self.name},
+				reference_doctype=self.doctype,
+				reference_name=self.name,
+				queue_separately=True,
+				send_priority=0,
+				args=args,
+				email_read_tracker_url=None
+				if test_email
+				else "/api/method/frappe.email.doctype.newsletter.newsletter.newsletter_email_read",
+			)
+		else :
+			template = frappe.get_doc("Email Template", self.custom_template)
+			args["message"] = template.response
+
+			frappe.sendmail(
+				subject=template.subject,
+				sender=sender,
+				recipients=emails,
+				attachments=attachments,
+				template="newsletter",
+				add_unsubscribe_link=self.send_unsubscribe_link,
+				unsubscribe_method="/unsubscribe",
+				unsubscribe_params={"name": self.name},
+				reference_doctype=self.doctype,
+				reference_name=self.name,
+				queue_separately=True,
+				send_priority=0,
+				args=args,
+				email_read_tracker_url=None
+				if test_email
+				else "/api/method/frappe.email.doctype.newsletter.newsletter.newsletter_email_read",
+			)
 
 		frappe.db.auto_commit_on_many_writes = is_auto_commit_set
 
@@ -392,6 +432,45 @@ def get_list_context(context=None):
 			"row_template": "email/doctype/newsletter/templates/newsletter_row.html",
 		}
 	)
+@frappe.whitelist()
+def intervally_send_email():
+	
+	today = frappe.utils.now_datetime()
+	scheduled_newsletters = frappe.get_all(
+		"Newsletter",
+		filters={
+			"email_sent": False,
+			"custom_intervally_sending": True,
+		},
+		ignore_ifnull=True,
+		pluck="name",
+	)
+	
+	for newsletter_name in scheduled_newsletters:
+		newsletter = frappe.get_doc("Newsletter", newsletter_name)
+		try:
+			months_day = [i.get("day") for i in newsletter.custom_month_day] if newsletter.custom_month_day else []
+			months = [i.get("month") for i in newsletter.custom_month] if newsletter.custom_month else []
+			if (newsletter.custom_sending_interval == "Weekly" \
+					and newsletter.custom_week_day == today.strftime("%A")) \
+					or (newsletter.custom_sending_interval == "Monthly" \
+		 			and today.strftime("%-d") in months_day) \
+					or (newsletter.custom_sending_interval == "Yearly" \
+		 			and today.strftime("%B") in months \
+					and today.strftime("%-d") in months_day):
+				newsletter.iterally_queue_all()
+				frappe.msgprint(f'Sas')
+				
+			
+		except Exception:
+			frappe.db.rollback()
+
+			# wasn't able to send emails :(
+			frappe.db.set_value("Newsletter", newsletter_name, "email_sent", 0)
+			newsletter.log_error("Failed to send newsletter")
+		if not frappe.flags.in_test:
+			frappe.db.commit()
+
 
 
 def send_scheduled_email():
