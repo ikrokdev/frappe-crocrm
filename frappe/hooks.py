@@ -215,7 +215,7 @@ scheduler_events = {
 		"45 0 * * *": [
 			"frappe.core.doctype.log_settings.log_settings.run_log_clean_up",
 		],
-		"20 14 * * *": [
+		"0 12 * * *": [
 			"frappe.email.doctype.newsletter.newsletter.intervally_send_email",
 		],
 	},
