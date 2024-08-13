@@ -72,20 +72,23 @@
    "label": "Content"
   },
   {
+   "default": "Subject",
+   "depends_on": "eval:doc.custom_content_source == 'Raw'",
    "fieldname": "subject",
    "fieldtype": "Small Text",
    "in_global_search": 1,
    "in_list_view": 1,
    "label": "Subject",
-   "reqd": 1
+   "mandatory_depends_on": "eval: doc.custom_content_source === 'Raw'"
   },
   {
+   "default": "Message",
    "depends_on": "eval: doc.content_type === 'Rich Text'",
    "fieldname": "message",
    "fieldtype": "Text Editor",
    "in_list_view": 1,
    "label": "Message",
-   "mandatory_depends_on": "eval: doc.content_type === 'Rich Text'"
+   "mandatory_depends_on": "eval: doc.content_type === 'Rich Text' && doc.custom_content_source === 'Raw'"
   },
   {
    "default": "1",
@@ -132,18 +135,20 @@
    "options": "Rich Text\nMarkdown\nHTML"
   },
   {
+   "default": "Message",
    "depends_on": "eval:doc.content_type === 'Markdown'",
    "fieldname": "message_md",
    "fieldtype": "Markdown Editor",
    "label": "Message (Markdown)",
-   "mandatory_depends_on": "eval:doc.content_type === 'Markdown'"
+   "mandatory_depends_on": "eval:doc.content_type === 'Markdown' && doc.custom_content_source === 'Raw'"
   },
   {
+   "default": "Message",
    "depends_on": "eval:doc.content_type === 'HTML'",
    "fieldname": "message_html",
    "fieldtype": "HTML Editor",
    "label": "Message (HTML)",
-   "mandatory_depends_on": "eval:doc.content_type === 'HTML'"
+   "mandatory_depends_on": "eval:doc.content_type === 'HTML' && doc.custom_content_source === 'Raw'"
   },
   {
    "default": "0",
