@@ -14,6 +14,6 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
       - name: build and deploy
-        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOSTS }} "cd ${{ secrets.WORK_DIR }} && ./build.sh"
+        run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && ./build.sh"
       - name: cleanup
         run: rm -rf ~/.ssh
