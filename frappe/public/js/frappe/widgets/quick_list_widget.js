@@ -19,12 +19,13 @@ export default class QuickListWidget extends Widget {
 
 	set_actions() {
 		if (this.in_customize_mode) return;
-
+		console.log('debug console. \n', 'Setting up quick list widget actions.');
 		this.setup_fields_list_button().then(() => {
 			this.setup_add_new_button();
 			this.setup_refresh_list_button();
 			this.setup_filter_list_button();
 			if (this.document_type === "Task") {
+				console.log('debug console. \n', 'Setting up quick list widget filter presets for Task type: \n', todo_filter_presets);
 				this.setup_filters_preset();
 			}
 		});
@@ -88,6 +89,7 @@ export default class QuickListWidget extends Widget {
 	}
 
 	setup_filters_preset() {
+		console.log('debug console. \n', this.filter_presets_list);
 		this.filter_presets_list = $(
 			`<div>
 				${todo_filter_presets.map((item) => {
@@ -130,6 +132,23 @@ export default class QuickListWidget extends Widget {
 		frappe.model.with_doctype(doctype, () => {
 			this.filter_group.add_filters_to_filter_group(this.filters);
 			this.dialog.set_df_property("filter_area", "hidden", false);
+		});
+	}
+	show_list_settings() {
+		console.log('debug console. \n', 'Setting up quick list configuration: \n', {
+			listview: this,
+			doctype: this.document_type,
+			settings: this.list_view_settings,
+			meta: frappe.get_meta(this.document_type),
+		});
+
+		frappe.model.with_doctype(this.document_type, () => {
+			new ListSettings({
+				listview: this,
+				doctype: this.document_type,
+				settings: this.list_view_settings,
+				meta: frappe.get_meta(this.document_type),
+			});
 		});
 	}
 
@@ -215,6 +234,7 @@ export default class QuickListWidget extends Widget {
 	}
 
 	set_body() {
+		console.log('debug console. \n', 'Setting up quick list body.', );
 		this.widget.addClass("quick-list-widget-box");
 
 		this.render_loading_state();
@@ -272,15 +292,34 @@ export default class QuickListWidget extends Widget {
 					return;
 				}
 
+<<<<<<< HEAD
+=======
+				this.labels = r.message?.keys.map((key) => {
+					let column = this.columns.find((col) => col.df.fieldname === key);
+					if (column) {
+						return column.df.label;
+					} else {
+						return key.charAt(0).toUpperCase() + key.slice(1);
+					}
+				})
+				console.log('debug console. \n', 'Setting up quick list items', );
+>>>>>>> c96657cd44 (bugfix(quick_list_widget): added console logs)
 				this.quick_list = data.map((doc) => this.setup_quick_list_item(doc));
 				this.quick_list.forEach(($quick_list_item) =>
 					$quick_list_item.appendTo(this.body)
 				);
+<<<<<<< HEAD
+=======
+				this.quick_list_table = this.quick_list_table.filter((i, el)=> i != 0);
+				console.log('debug console. \n', 'Appending quick list items.', );
+				this.quick_list_table.appendTo(this.body);
+>>>>>>> c96657cd44 (bugfix(quick_list_widget): added console logs)
 			});
 		});
 	}
 
 	set_footer() {
+		console.log('debug console. \n', 'Setting up widget footer.', );
 		this.footer.empty();
 
 		let filters = frappe.utils.get_filter_from_json(this.quick_list_filter);
