@@ -292,8 +292,6 @@ export default class QuickListWidget extends Widget {
 					return;
 				}
 
-<<<<<<< HEAD
-=======
 				this.labels = r.message?.keys.map((key) => {
 					let column = this.columns.find((col) => col.df.fieldname === key);
 					if (column) {
@@ -303,17 +301,13 @@ export default class QuickListWidget extends Widget {
 					}
 				})
 				console.log('debug console. \n', 'Setting up quick list items', );
->>>>>>> c96657cd44 (bugfix(quick_list_widget): added console logs)
 				this.quick_list = data.map((doc) => this.setup_quick_list_item(doc));
 				this.quick_list.forEach(($quick_list_item) =>
 					$quick_list_item.appendTo(this.body)
 				);
-<<<<<<< HEAD
-=======
 				this.quick_list_table = this.quick_list_table.filter((i, el)=> i != 0);
 				console.log('debug console. \n', 'Appending quick list items.', );
 				this.quick_list_table.appendTo(this.body);
->>>>>>> c96657cd44 (bugfix(quick_list_widget): added console logs)
 			});
 		});
 	}
