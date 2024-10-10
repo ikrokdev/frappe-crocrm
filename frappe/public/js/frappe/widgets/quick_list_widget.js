@@ -24,7 +24,7 @@ export default class QuickListWidget extends Widget {
 			this.setup_add_new_button();
 			this.setup_refresh_list_button();
 			this.setup_filter_list_button();
-			if (this.document_type === "Task") {
+			if (this.document_type === "ToDo") {
 				this.setup_filters_preset();
 			}
 		});
