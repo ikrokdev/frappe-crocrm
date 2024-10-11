@@ -1,6 +1,5 @@
 import ListSettings from "../../../../../../../sites/assets/frappe/js/frappe/list/list_settings.js";
 import Widget from "./base_widget.js";
-import todo_filter_presets from "./todo_filter_presets.js";
 
 frappe.provide("frappe.utils");
 
@@ -291,6 +290,32 @@ export default class QuickListWidget extends Widget {
 	}
 
 	setup_filters_preset() {
+		const today = new Date().toISOString().split('T')[0];
+		const currentUser = frappe.session.user;
+
+		var todo_filter_presets = [
+		{ 
+			title: "All My Calls",
+			id: "0",
+			configuration: [["ToDo", "allocated_to", "=", currentUser]]
+		},
+		{ 
+			title: "Due today",
+			id: "1",
+			configuration: [["ToDo", "date", "=", today], ["ToDo", "allocated_to", "=", currentUser]]
+		},
+		{ 
+			title: "Overdue",
+			id: "2",
+			configuration: [["ToDo", "date", "<", today], ["ToDo", "allocated_to", "=", currentUser]]
+		},
+		{ 
+			title: "Upcoming",
+			id: "3",
+			configuration: [["ToDo", "date", ">", today], ["ToDo", "allocated_to", "=", currentUser]]
+		}
+		];
+
 		this.filter_presets_list = $(
 			`<div>
 				${todo_filter_presets.map((item) => {
