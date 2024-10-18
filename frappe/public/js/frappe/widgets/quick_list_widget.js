@@ -294,27 +294,43 @@ export default class QuickListWidget extends Widget {
 		const currentUser = frappe.session.user;
 
 		var todo_filter_presets = [
-		{ 
-			title: "All My Calls",
-			id: "0",
-			configuration: [["ToDo", "allocated_to", "=", currentUser]]
-		},
-		{ 
-			title: "Due today",
-			id: "1",
-			configuration: [["ToDo", "date", "=", today], ["ToDo", "allocated_to", "=", currentUser]]
-		},
-		{ 
-			title: "Overdue",
-			id: "2",
-			configuration: [["ToDo", "date", "<", today], ["ToDo", "allocated_to", "=", currentUser]]
-		},
-		{ 
-			title: "Upcoming",
-			id: "3",
-			configuration: [["ToDo", "date", ">", today], ["ToDo", "allocated_to", "=", currentUser]]
-		}
+			{ 
+				title: "All My Calls",
+				id: "0",
+				configuration: [
+					["ToDo", "allocated_to", "=", currentUser],
+					["ToDo", "status", "=", "Open"]
+				]
+			},
+			{ 
+				title: "Due today",
+				id: "1",
+				configuration: [
+					["ToDo", "date", "=", today], 
+					["ToDo", "allocated_to", "=", currentUser],
+					["ToDo", "status", "=", "Open"]
+				]
+			},
+			{ 
+				title: "Overdue",
+				id: "2",
+				configuration: [
+					["ToDo", "date", "<", today], 
+					["ToDo", "allocated_to", "=", currentUser],
+					["ToDo", "status", "=", "Open"]
+				]
+			},
+			{ 
+				title: "Upcoming",
+				id: "3",
+				configuration: [
+					["ToDo", "date", ">", today], 
+					["ToDo", "allocated_to", "=", currentUser],
+					["ToDo", "status", "=", "Open"]
+				]
+			}
 		];
+
 
 		this.filter_presets_list = $(
 			`<div>
