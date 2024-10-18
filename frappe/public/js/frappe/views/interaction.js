@@ -66,7 +66,20 @@ frappe.views.InteractionComposer = class InteractionComposer {
 					});
 					me.set_reqd_hidden_fields(values);
 					me.get_event_categories();
-				},
+	
+					// Додаємо логіку для перевірки на 'ToDo' і 'Customer'
+					if (values.interaction_type === "ToDo" && me.frm.doc.doctype === "Customer") {
+						let today = new Date();
+						today.setHours(8, 0, 0); // Встановлюємо 8:00:00
+						let formattedDate = frappe.datetime.get_datetime_as_string(today);
+	
+						// Автоматично встановлюємо "Assigned To" на поточного користувача
+						me.dialog.set_value("assigned_to", frappe.session.user);
+	
+						// Автоматично встановлюємо "Date" на сьогоднішню дату
+						me.dialog.set_value("due_date", formattedDate);
+					}
+				}
 			},
 			{
 				label: __("Category"),
