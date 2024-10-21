@@ -300,7 +300,8 @@ export default class QuickListWidget extends Widget {
 				configuration: [
 					["ToDo", "allocated_to", "=", currentUser],
 					["ToDo", "status", "=", "Open"]
-				]
+				],
+				order_by: "due_date desc"
 			},
 			{ 
 				title: "Due today",
@@ -309,7 +310,8 @@ export default class QuickListWidget extends Widget {
 					["ToDo", "date", "=", today], 
 					["ToDo", "allocated_to", "=", currentUser],
 					["ToDo", "status", "=", "Open"]
-				]
+				],
+				order_by: "due_date desc"
 			},
 			{ 
 				title: "Overdue",
@@ -318,7 +320,8 @@ export default class QuickListWidget extends Widget {
 					["ToDo", "date", "<", today], 
 					["ToDo", "allocated_to", "=", currentUser],
 					["ToDo", "status", "=", "Open"]
-				]
+				],
+				order_by: "due_date asc"
 			},
 			{ 
 				title: "Upcoming",
@@ -327,7 +330,8 @@ export default class QuickListWidget extends Widget {
 					["ToDo", "date", ">", today], 
 					["ToDo", "allocated_to", "=", currentUser],
 					["ToDo", "status", "=", "Open"]
-				]
+				],
+				order_by: "due_date desc"
 			}
 		];
 
