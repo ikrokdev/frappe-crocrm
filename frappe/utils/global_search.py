@@ -506,6 +506,11 @@ def search(text, start=0, limit=20, doctype=""):
 			query = query.offset(start)
 
 		result = query.run(as_dict=True)
+		customers = frappe.get_all("Customer", fields=["name", "customer_name as content"], filters={"customer_name": ['like', f"%{word}%"]})
+		for customer in customers:
+			customer.doctype = "Customer"
+			customer.rank = 1.0
+			result.insert(0, customer)
 
 		results.extend(result)
 
