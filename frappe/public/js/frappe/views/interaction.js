@@ -98,7 +98,7 @@ frappe.views.InteractionComposer = class InteractionComposer {
 				options: "User",
 			},
 			{ fieldtype: "Section Break" },
-			{ label: __("Summary"), fieldtype: "Data", fieldname: "summary" },
+			{ label: __("Summary"), fieldtype: "Data", fieldname: "summary", hidden: 1 },
 			{ fieldtype: "Section Break" },
 			{ fieldtype: "Text Editor", fieldname: "description" },
 			{ fieldtype: "Section Break" },
