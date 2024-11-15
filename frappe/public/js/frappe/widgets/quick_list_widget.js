@@ -89,7 +89,8 @@ export default class QuickListWidget extends Widget {
 				df.in_list_view &&
 				frappe.perm.has_perm(this.document_type, df.permlevel, "read")) ||
 			(df.fieldtype === "Currency" && df.options && !df.options.includes(":")) ||
-			df.fieldname === "status"
+			df.fieldname === "status" ||
+			df.fieldname === "reference_name"
 		);
 	});
 }
@@ -128,7 +129,7 @@ export default class QuickListWidget extends Widget {
 				},
 			});
 		}
-		
+
 		const fields_in_list_view = this.get_fields_in_list_view();
 		// Add rest from in_list_view docfields
 		this.columns = this.columns.concat(
@@ -137,9 +138,9 @@ export default class QuickListWidget extends Widget {
 					if (frappe.has_indicator(this.document_type) && df.fieldname === "status") {
 						return false;
 					}
-					if (!df.in_list_view) {
-						return false;
-					}
+					// if (!df.in_list_view) {
+					// 	return false;
+					// }
 					return df.fieldname !== this.meta.title_field;
 				})
 				.map((df) => ({
